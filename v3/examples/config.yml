@@ -10,6 +10,9 @@ common: &default_settings
     is: ignored
   utilization:
     total_ram_mib: 12345
+  labels:
+    label1: value1
+    label2: value2
 
 production:
   <<: *default_settings

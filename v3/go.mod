@@ -5,4 +5,5 @@ go 1.14
 require (
 	github.com/goccy/go-yaml v1.7.17
 	github.com/newrelic/go-agent/v3 v3.7.0
+	github.com/stretchr/testify v1.4.0
 )

@@ -12,17 +12,17 @@ import (
 // Uses `newrelic.yml` in the current directory, plus the environment defined by `NEW_RELIC_ENVIRONMENT`.
 // if `NEW_RELIC_ENVIRONMENT` is not defined or is empty, the literal string `production` is used.
 func ConfigFromDefaultYaml() newrelic.ConfigOption {
-	return ConfigFromYaml("newrelic.yml")
+	return ConfigFromYamlFile("newrelic.yml")
 }
 
 // Uses the supplied filename, plus the environment defined by `NEW_RELIC_ENVIRONMENT`.
 // if `NEW_RELIC_ENVIRONMENT` is not defined or is empty, the literal string `production` is used.
-func ConfigFromYaml(filename string) newrelic.ConfigOption {
-	return ConfigFromYamlEnvironment(filename, os.Getenv("NEW_RELIC_ENVIRONMENT"))
+func ConfigFromYamlFile(filename string) newrelic.ConfigOption {
+	return ConfigFromYamlFileEnvironment(filename, os.Getenv("NEW_RELIC_ENVIRONMENT"))
 }
 
 // Uses the supplied filename and environment.
-func ConfigFromYamlEnvironment(filename string, environment string) newrelic.ConfigOption {
+func ConfigFromYamlFileEnvironment(filename string, environment string) newrelic.ConfigOption {
 	return func(cfg *newrelic.Config) {
 		dat, err := ioutil.ReadFile(filename)
 		if nil != err {

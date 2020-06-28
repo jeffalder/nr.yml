@@ -15,6 +15,7 @@ type ConfigYaml struct {
 	SecurityPoliciesToken *string                 `yaml:"security_policies_token"`
 	LogStreamName         *string                 `yaml:"log_stream_name"`
 	LogLevel              *string                 `yaml:"log_level"`
+	Labels                *map[string]string      `yaml:"labels"`
 	DistributedTracing    *DistributedTracingYaml `yaml:"distributed_tracing"`
 	InfiniteTracing       *InfiniteTracingYaml    `yaml:"infinite_tracing"`
 	ProcessHost           *ProcessHostYaml        `yaml:"process_host"`
@@ -45,6 +46,10 @@ func (yamlValues ConfigYaml) update(cfg *newrelic.Config) {
 
 	if yamlValues.Host != nil {
 		cfg.Host = *yamlValues.Host
+	}
+
+	if yamlValues.Labels != nil {
+		cfg.Labels = *yamlValues.Labels
 	}
 
 	if yamlValues.Attributes != nil {
@@ -85,11 +90,15 @@ func (yamlValues ConfigYaml) updateLogging(cfg *newrelic.Config) {
 	}
 
 	if logStream != nil {
-		switch *yamlValues.LogLevel {
-		case "DEBUG", "Debug", "debug":
-			newrelic.ConfigDebugLogger(logStream)(cfg)
-		default:
+		if yamlValues.LogLevel == nil {
 			newrelic.ConfigInfoLogger(logStream)(cfg)
+		} else {
+			switch *yamlValues.LogLevel {
+			case "DEBUG", "Debug", "debug":
+				newrelic.ConfigDebugLogger(logStream)(cfg)
+			default:
+				newrelic.ConfigInfoLogger(logStream)(cfg)
+			}
 		}
 	}
 }
