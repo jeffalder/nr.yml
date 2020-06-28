@@ -1,0 +1,95 @@
+package nr_yml
+
+import (
+	"github.com/newrelic/go-agent/v3/newrelic"
+	"os"
+)
+
+// Don't use this; it's only exported for the yaml parser
+type ConfigYaml struct {
+	AppName               *string                 `yaml:"app_name"`
+	License               *string                 `yaml:"license_key"`
+	Host                  *string                 `yaml:"host"`
+	Enabled               *bool                   `yaml:"agent_enabled"`
+	HighSecurity          *bool                   `yaml:"high_security"`
+	SecurityPoliciesToken *string                 `yaml:"security_policies_token"`
+	LogStreamName         *string                 `yaml:"log_stream_name"`
+	LogLevel              *string                 `yaml:"log_level"`
+	DistributedTracing    *DistributedTracingYaml `yaml:"distributed_tracing"`
+	InfiniteTracing       *InfiniteTracingYaml    `yaml:"infinite_tracing"`
+	ProcessHost           *ProcessHostYaml        `yaml:"process_host"`
+	Attributes            *AttributesYaml         `yaml:"attributes"`
+	Utilization           *UtilizationYaml        `yaml:"utilization"`
+}
+
+func (yamlValues ConfigYaml) update(cfg *newrelic.Config) {
+	if yamlValues.AppName != nil {
+		newrelic.ConfigAppName(*yamlValues.AppName)(cfg)
+	}
+
+	if yamlValues.Enabled != nil {
+		newrelic.ConfigEnabled(*yamlValues.Enabled)(cfg)
+	}
+
+	if yamlValues.License != nil {
+		newrelic.ConfigLicense(*yamlValues.License)(cfg)
+	}
+
+	if yamlValues.HighSecurity != nil {
+		cfg.HighSecurity = *yamlValues.HighSecurity
+	}
+
+	if yamlValues.SecurityPoliciesToken != nil {
+		cfg.SecurityPoliciesToken = *yamlValues.SecurityPoliciesToken
+	}
+
+	if yamlValues.Host != nil {
+		cfg.Host = *yamlValues.Host
+	}
+
+	if yamlValues.Attributes != nil {
+		yamlValues.Attributes.update(cfg)
+	}
+
+	if yamlValues.InfiniteTracing != nil {
+		yamlValues.InfiniteTracing.update(cfg)
+	}
+
+	if yamlValues.DistributedTracing != nil {
+		yamlValues.DistributedTracing.update(cfg)
+	}
+
+	if yamlValues.ProcessHost != nil {
+		yamlValues.ProcessHost.update(cfg)
+	}
+
+	if yamlValues.Utilization != nil {
+		yamlValues.Utilization.update(cfg)
+	}
+
+	yamlValues.updateLogging(cfg)
+}
+
+func (yamlValues ConfigYaml) updateLogging(cfg *newrelic.Config) {
+	var logStream *os.File
+
+	if yamlValues.LogStreamName == nil {
+		return
+	}
+
+	switch *yamlValues.LogStreamName {
+	case "STDOUT", "Stdout", "stdout":
+		logStream = os.Stdout
+	case "STDERR", "Stderr", "stderr":
+		logStream = os.Stderr
+	}
+
+	if logStream != nil {
+		switch *yamlValues.LogLevel {
+		case "DEBUG", "Debug", "debug":
+			newrelic.ConfigDebugLogger(logStream)(cfg)
+		default:
+			newrelic.ConfigInfoLogger(logStream)(cfg)
+		}
+	}
+}

@@ -1,0 +1,19 @@
+common: &default_settings
+  app_name: foo
+  license_key: 123abc
+  distributed_tracing:
+    enabled: true
+  infinite_tracing:
+    trace_observer:
+      host: my-trace-observer.example.com
+  this:
+    is: ignored
+  utilization:
+    total_ram_mib: 12345
+
+production:
+  <<: *default_settings
+
+development:
+  <<: *default_settings
+  app_name: foo-dev
