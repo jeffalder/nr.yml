@@ -1,6 +1,6 @@
 # nr.yml
 
-Yaml configuration for New Relic's Go SDK
+Yaml configuration for New Relic's Go SDK.
 
 **Important Support Note**: This is _not_ a New Relic product. _Do not_ contact New Relic support for issues with this code. Instead, _do_ file GitHub issues in this project.
 
