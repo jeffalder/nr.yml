@@ -118,7 +118,7 @@ production:
 
 ## Contributions
 
-Contributions are welcome. Submit an issue or (preferably) a PR!
+Contributions are welcome. Submit an issue or (preferably) a PR! I'll get back to you as soon as I can.
 
 ## Code of Conduct
 
